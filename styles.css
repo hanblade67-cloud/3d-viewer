@@ -1,0 +1,849 @@
+.three-d-viewer-wrapper {
+  display: block !important;
+  margin: 0;
+  width: 100%;
+  position: relative;
+}
+
+.three-d-viewer-container,
+.three-d-viewer-inline-container {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin: 1em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: var(--background-secondary);
+  position: relative;
+}
+
+/* Убираем тень и рамку когда фон прозрачный */
+.three-d-viewer-container.transparent-background,
+.three-d-viewer-inline-container.transparent-background {
+  box-shadow: none;
+  border: none;
+  background: transparent !important;
+}
+
+.three-d-viewer-inline-container {
+  margin: 10px 0;
+  display: block !important;
+  min-height: 400px;
+  width: 100% !important;
+  visibility: visible !important;
+  pointer-events: auto;
+  transition: aspect-ratio 0.3s ease;
+}
+
+/* Длинный формат окна - почти квадрат (1:1.1) */
+.three-d-viewer-inline-container.window-format-long {
+  aspect-ratio: 10 / 11;
+}
+
+/* Кастомный формат - размеры задаются вручную */
+.three-d-viewer-inline-container.window-format-custom {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: none !important;
+  width: auto !important;
+}
+
+/* Родительский embed для кастомного формата */
+.internal-embed:has(.window-format-custom) {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Кастомные размеры */
+.custom-size-control {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-size-control input[type="number"] {
+  width: 80px;
+  padding: 4px 8px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.custom-size-control input[type="number"]:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+}
+
+.custom-size-separator {
+  color: var(--text-muted);
+  font-weight: bold;
+}
+
+.custom-size-apply-button {
+  padding: 4px 12px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.custom-size-apply-button:hover:not(:disabled) {
+  background: var(--interactive-accent-hover);
+  transform: scale(1.05);
+}
+
+.custom-size-apply-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Полностью убираем фон и все эффекты internal-embed */
+.internal-embed:has(.three-d-viewer-inline-container),
+.internal-embed.no-resize {
+  all: unset !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  pointer-events: none !important;
+  position: relative !important;
+}
+
+.internal-embed:has(.three-d-viewer-inline-container):hover,
+.internal-embed.no-resize:hover {
+  all: unset !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  pointer-events: none !important;
+  position: relative !important;
+}
+
+/* Блокирующий overlay - перекрывает область вокруг контейнера */
+.three-d-viewer-block-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: auto;
+  background: transparent;
+}
+
+/* Запрещаем изменение размера контейнера */
+.three-d-viewer-inline-container {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Скрываем любые resize handles/overlays внутри наших элементов */
+.internal-embed.no-resize .resize-handle,
+.internal-embed.no-resize [class*="resize"],
+.internal-embed.no-resize [class*="handle"],
+.three-d-viewer-inline-container .resize-handle,
+.three-d-viewer-inline-container [class*="resize"],
+.three-d-viewer-inline-container [class*="handle"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.three-d-viewer-inline-container.is-hidden {
+  display: none !important;
+}
+
+.three-d-viewer-container canvas,
+.three-d-viewer-inline-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.three-d-viewer-container canvas:active,
+.three-d-viewer-inline-container canvas:active {
+  cursor: grabbing;
+}
+
+.three-d-viewer-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-error);
+  font-size: 14px;
+  padding: 20px;
+  text-align: center;
+}
+
+.three-d-viewer-toggle-button {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 4px 0;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.three-d-viewer-toggle-button:hover {
+  background: var(--interactive-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.three-d-viewer-toggle-button:active {
+  transform: translateY(0);
+}
+
+/* Inline блочный контейнер */
+.three-d-viewer-inline-block {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  background: var(--background-primary);
+  border: 2px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.three-d-viewer-inline-block.is-hidden {
+  display: none;
+}
+
+.three-d-viewer-close-btn {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 12px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.three-d-viewer-close-btn:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.three-d-viewer-model-container {
+  width: 100%;
+  height: 500px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+}
+
+/* Toolbar с кнопкой настроек */
+.three-d-viewer-toolbar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.three-d-viewer-inline-container:hover .three-d-viewer-toolbar {
+  opacity: 1;
+}
+
+.three-d-viewer-settings-button {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.three-d-viewer-settings-button img {
+  display: block;
+  pointer-events: none;
+  transition: transform 0.5s ease;
+}
+
+.three-d-viewer-settings-button:hover img {
+  transform: rotate(-90deg);
+}
+
+.three-d-viewer-settings-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.three-d-viewer-settings-button:active {
+  transform: scale(0.95);
+}
+
+/* Меню настроек */
+.three-d-viewer-settings-menu {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+}
+
+/* Шапка меню */
+.settings-menu-header {
+  padding: 16px 16px 12px 16px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.settings-menu-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-normal);
+  text-align: center;
+}
+
+/* Контейнер для настроек с скроллом */
+.settings-menu-content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 12px;
+  padding-bottom: 80px;
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: 490px;
+}
+
+/* Меньшая высота для меню сверху/снизу */
+.three-d-viewer-settings-menu.menu-position-top .settings-menu-content,
+.three-d-viewer-settings-menu.menu-position-bottom .settings-menu-content {
+  max-height: 250px;
+}
+
+/* Длинный формат окна - через класс на меню */
+.three-d-viewer-settings-menu.window-format-long .settings-menu-content {
+  max-height: 700px;
+}
+
+.three-d-viewer-settings-menu.window-format-long.menu-position-top .settings-menu-content,
+.three-d-viewer-settings-menu.window-format-long.menu-position-bottom .settings-menu-content {
+  max-height: 350px;
+}
+
+/* Кастомный формат окна - через класс на меню */
+.three-d-viewer-settings-menu.window-format-custom .settings-menu-content {
+  max-height: var(--custom-menu-height, 490px);
+}
+
+.three-d-viewer-settings-menu.window-format-custom.menu-position-top .settings-menu-content,
+.three-d-viewer-settings-menu.window-format-custom.menu-position-bottom .settings-menu-content {
+  max-height: var(--custom-menu-height-half, 245px);
+}
+
+/* Кастомный скроллбар */
+.settings-menu-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-menu-content::-webkit-scrollbar-track {
+  background: var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+.settings-menu-content::-webkit-scrollbar-thumb {
+  background: var(--interactive-accent);
+  border-radius: 4px;
+}
+
+.settings-menu-content::-webkit-scrollbar-thumb:hover {
+  background: var(--interactive-accent-hover);
+}
+
+/* Анимации выезда */
+.three-d-viewer-settings-menu.menu-position-right {
+  animation: slideInRight 0.3s ease;
+  transform-origin: left center;
+}
+
+.three-d-viewer-settings-menu.menu-position-left {
+  animation: slideInLeft 0.3s ease;
+  transform-origin: right center;
+}
+
+.three-d-viewer-settings-menu.menu-position-top {
+  animation: slideInTop 0.3s ease;
+  transform-origin: center bottom; 
+}
+
+.three-d-viewer-settings-menu.menu-position-bottom {
+  animation: slideInBottom 0.3s ease;
+  transform-origin: center bottom;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* Группа настроек (для визуального объединения) */
+.setting-group {
+  margin-bottom: 4px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.setting-group .setting-item {
+  margin-bottom: 0;
+}
+
+/* Элементы настроек - все одного размера */
+.three-d-viewer-settings-menu .setting-item {
+  margin-bottom: 4px;
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin-bottom 0.3s ease;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.three-d-viewer-settings-menu .setting-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Подчиненная настройка (с отступом) */
+.setting-sub {
+  padding-left: 24px;
+  min-height: 32px;
+}
+
+.setting-sub .setting-item-name {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Локальная настройка с плавной анимацией */
+.local-display-setting {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease, min-height 0.3s ease;
+  max-height: 0;
+  min-height: 0 !important;
+  opacity: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: none;
+}
+
+.local-display-setting.is-visible {
+  display: flex;
+  max-height: 90px;
+  min-height: 32px;
+  opacity: 1;
+  margin-bottom: 4px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Кастомная настройка размеров с плавной анимацией */
+.custom-size-setting {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease, min-height 0.3s ease;
+  padding-left: 24px;
+  max-height: 0;
+  min-height: 0 !important;
+  opacity: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: none;
+}
+
+.custom-size-setting.is-visible {
+  display: flex;
+  max-height: 100px;
+  min-height: 32px;
+  opacity: 1;
+  margin-bottom: 4px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Чекбокс */
+.three-d-viewer-settings-menu input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+/* Кнопка закрытия */
+.three-d-viewer-close-button {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.three-d-viewer-close-button:hover {
+  background: var(--interactive-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.three-d-viewer-close-button:active {
+  transform: translateY(0);
+}
+
+.three-d-viewer-settings-menu .setting-item-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-normal);
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 12px;
+}
+
+.three-d-viewer-settings-menu .setting-item-control {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 60%;
+}
+
+.three-d-viewer-settings-menu .setting-item-control select {
+  padding: 6px 8px;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.three-d-viewer-settings-menu .setting-item-control select:hover {
+  border-color: var(--interactive-accent);
+}
+
+.three-d-viewer-settings-menu .setting-item-control select:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+}
+
+.three-d-viewer-settings-menu .setting-item-control input[type="number"] {
+  width: 80px;
+  padding: 6px 8px;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: text;
+}
+
+.three-d-viewer-settings-menu .setting-item-control input[type="number"]:hover {
+  border-color: var(--interactive-accent);
+}
+
+.three-d-viewer-settings-menu .setting-item-control input[type="number"]:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+}
+
+/* Canvas контейнер */
+.three-d-viewer-canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Кнопки управления камерой */
+.camera-control {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.camera-save-button,
+.camera-reset-button,
+.close-container-button {
+  padding: 6px 14px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.camera-save-button:hover,
+.camera-reset-button:hover,
+.close-container-button:hover {
+  background: var(--interactive-accent-hover);
+  transform: scale(1.05);
+}
+
+.camera-save-button:active,
+.camera-reset-button:active,
+.close-container-button:active {
+  transform: scale(0.95);
+}
+
+.camera-reset-button {
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.camera-reset-button:hover {
+  background: var(--background-modifier-error-hover);
+}
+
+.close-container-button {
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.close-container-button:hover {
+  background: var(--background-modifier-error-hover);
+}
+
+/* Кнопка "Поставить фон" */
+.set-background-button {
+  padding: 6px 14px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.set-background-button:hover {
+  background: var(--interactive-accent-hover);
+  transform: scale(1.05);
+}
+
+.set-background-button:active {
+  transform: scale(0.95);
+}
+
+/* Модальное окно */
+.three-d-viewer-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.three-d-viewer-modal-content {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 24px;
+  min-width: 500px;
+  max-width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideInModal 0.3s ease;
+}
+
+@keyframes slideInModal {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.three-d-viewer-modal-content h3 {
+  margin: 0 0 16px 0;
+  color: var(--text-normal);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.background-link-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.background-link-input:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+}
+
+.panorama-setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px 0;
+}
+
+.panorama-setting span {
+  color: var(--text-normal);
+  font-size: 14px;
+}
+
+.panorama-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-ok-button,
+.modal-cancel-button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-ok-button {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.modal-ok-button:hover {
+  background: var(--interactive-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-cancel-button {
+  background: var(--background-secondary);
+  color: var(--text-normal);
+}
+
+.modal-cancel-button:hover {
+  background: var(--background-modifier-hover);
+  transform: translateY(-1px);
+}
+
+.modal-ok-button:active,
+.modal-cancel-button:active {
+  transform: translateY(0);
+}

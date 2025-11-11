@@ -1,0 +1,9 @@
+{
+  "id": "3d-viewer",
+  "name": "3D Viewer",
+  "version": "3.2.0",
+  "minAppVersion": "1.5.0",
+  "author": "Hanblade",
+  "description": "Displaying 3D objects directly in a note.",
+  "isDesktopOnly": true
+}
